@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Calculator</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styledatabase.css' %}">
+</head>
+<body id="core">
+    <div id="navi">
+        <div id="logo">
+            <img src="{% static 'icon-nutrition.png' %}">
+        </div>
+        <nav>
+
+        <a href="{% url 'webserver' %}">Calculator</a>
+
+        <a href="{% url 'database' %}"> Food Database</a>
+
+        <a href="{% url 'databasedell' %}">Database Delete</a>
+
+
+        </nav>
+        
+
+    </div>
+    <div id="content">
+        <h2>Delete a Food</h2>
+        <form action="{% url 'databasedell' %}" method="post">
+            {% csrf_token%}
+            <label>Food name: </label>
+            <input type="text" name="Name" id="Name">
+            
+            
+            <input type="submit" value="Submit">
+            <h4>{{response}}</h4>
+    
+    
+        </form>
+
+    </div>
+
+
+    
+</body>
+</html>

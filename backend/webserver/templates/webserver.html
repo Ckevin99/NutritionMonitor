@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutrition Calculator</title>
+    {% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+</head>
+<body id="core">
+    <div id="navi">
+        <div id="logo">
+            <img src="{% static 'icon-nutrition.png' %}">
+        </div>
+        <nav>
+
+        <a href="{% url 'webserver' %}">Calculator</a>
+
+        <a href="{% url 'database' %}"> Food Database</a>
+
+        <a href="{% url 'databasedell' %}">Database Delete</a>
+
+
+        </nav>
+        
+
+    </div>
+    
+    <div id="contentparent">
+
+        <div id="utilities">
+            
+            
+            <div id="buttondiv">
+                <h3>New row</h3>
+                <button onclick=addnew() id="addnew"> Add New</button>
+            </div>
+
+        </div>
+
+        <div id="formdiv">
+            <form action="{% url 'webserver' %}" method="post">
+                {% csrf_token%}
+                <label>Name: </label>
+                <input type="text" name="Name" id="Name">
+                <label>Calories goal: </label>
+                <input type="text" name="Calories" id="Calories">
+
+                <h3>Foods</h3>
+                <div id="titlefood">
+                    <h4 id="titlefoodname">Name</h4> <h4 id="titlefoodgrams">Grams</h4>
+                </div>
+                
+                <div id="dataform">
+                <select id="dropdown-id" class="selectedoptions" ><option value="">Choose an option</option></select>
+                <input type="number" name="inputgrams" id="inputgrams" class="inputnumbers", step="0.1">
+                </div>
+            </form>
+
+        </div>
+        <div id="caloriesdata">
+
+              </head>
+              <body>
+              
+            
+              <div id="tableid">
+                <h2>Macronutrientes</h2>
+                <button onclick=calculatekcal() id="calculate"> Calculate</button>
+              <table>
+                <tr>
+                  <th>Name</th>
+                  <th>Grams</th>
+                  <th>Calories</th>
+                  <th>Kcal %</th>
+                </tr>
+
+                <tr>
+                  <td>Carbohydrates</td>
+                  <td id="carbg">0</td>
+                  <td id="carbc">0</td>
+                  <td id="carbp">0</td>
+                </tr>
+                <tr>
+                    <td>Proteins</td>
+                    <td id="protg">0</td>
+                    <td id="protc">0</td>
+                    <td id="protp">0</td>
+                  </tr>
+                  <tr>
+                    <td>Fat</td>
+                    <td id="fatg">0</td>
+                    <td id="fatc">0</td>
+                    <td id="fatp">0</td>
+                  </tr>
+                  <tr>
+                    <td>Dietary Fiber</td>
+                    <td id="fiberg">0</td>
+                    <td>x</td>
+                    <td>x</td>
+                  </tr>
+                  <tr>
+                         <td>Total</td>
+                         <td id="totalg">0</td>
+                         <td id="totalc">0</td>
+                         <td id="totalt">0</td>
+                    </tr>
+                
+                </table>
+             </div>
+        </div>
+        
+    
+        
+        
+
+    </div>
+
+  
+<script>
+    
+function calculatekcal(){
+  
+    var elements = document.getElementsByClassName('inputnumbers');
+    var elementsjson = document.getElementsByClassName('selectedoptions');
+
+    var values3 = [];
+
+
+    for (var i = 0; i < elements.length; i++) 
+        {
+        if (elements[i].value !== "")
+            {
+
+            values3.push([elements[i].value, JSON.parse(elementsjson[i].value)]);
+            }   
+    
+    
+        }
+    Total_Calories = 0;
+    Total_Carbohydrates = 0;
+    Total_Proteins = 0;
+    Total_Fat = 0;
+    Total_Fiber = 0;
+    for (var i = 0; values3.length>i; i++){
+        Total_Calories += +values3[i][0]/100*+values3[i][1].Calories;
+        Total_Carbohydrates += +values3[i][0]/100*+values3[i][1].Carbohydrates;
+        Total_Proteins += +values3[i][0]/100*+values3[i][1].Proteins;
+        Total_Fat += +values3[i][0]/100*+values3[i][1].Fat;
+        Total_Fiber += +values3[i][0]/100*+values3[i][1].Fiber;
+    
+        
+        
+
+
+    }
+    console.log(Total_Calories)
+    console.log(Total_Carbohydrates)
+    document.getElementById('carbg').innerHTML = Total_Carbohydrates.toFixed(1)
+    var carbc = (Total_Carbohydrates*4).toFixed(1)
+    document.getElementById('carbc').innerHTML = carbc
+    
+    console.log(Total_Proteins)
+    document.getElementById('protg').innerHTML =(Total_Proteins).toFixed(1)
+    var protc = (Math.round(Total_Proteins*4)).toFixed(1)
+    document.getElementById('protc').innerHTML = protc
+
+    console.log(Total_Fat)
+    document.getElementById('fatg').innerHTML = Math.round(Total_Fat).toFixed(1)
+    var fatc = Math.round(Total_Fat*9).toFixed(1)
+
+    document.getElementById('fatc').innerHTML = fatc
+    console.log(Total_Fiber)
+    document.getElementById('fiberg').innerHTML = Math.round(Total_Fiber).toFixed(1)
+
+    document.getElementById('totalg').innerHTML = Math.round(+Total_Proteins+Total_Fat+Total_Fiber).toFixed(1)
+    var totalc = (Math.round((4*(Total_Carbohydrates+Total_Proteins))+(Total_Fat*9))).toFixed(1)
+    document.getElementById('totalc').innerHTML = totalc
+
+    var goal = document.getElementById("Calories").value
+
+    var carbp = (carbc/goal*100).toFixed(1)
+    document.getElementById('carbp').innerHTML = carbp
+    var protp = (protc/goal*100).toFixed(1)
+    document.getElementById('protp').innerHTML = protp
+    var fatp = (fatc/goal*100).toFixed(1)
+    document.getElementById('fatp').innerHTML =  fatp 
+    document.getElementById('totalt').innerHTML =  ((+carbp)+(+protp)+(+fatp)).toFixed(1)
+
+
+
+
+
+
+
+
+
+}
+
+
+function addnew() {
+    dropvalue = document.getElementById('dropdown-id');
+    
+    if (dropvalue.value !== ""){
+        console.log(dropvalue.value)
+        
+        value = JSON.parse(dropvalue.value)
+        console.log(value)
+        const selectedValue = dropvalue;
+        console.log(this)
+    
+        const food = value.Name;
+        const calories = value.Calories
+        
+        console.log(food)
+        console.log(calories)
+   
+
+    }
+    const dropdown = document.getElementById('dropdown-id');
+    const clonedSelect = dropdown.cloneNode(true);
+
+    const input = document.getElementById('inputgrams');
+    const clonedInput = input.cloneNode(true);
+    clonedInput.value = ""
+    clonedSelect.removeAttribute('id');
+    clonedInput.removeAttribute('id');
+
+   
+
+    content = document.getElementById('dataform');
+    content.appendChild(clonedSelect);
+    content.appendChild(clonedInput);
+    
+;
+
+}
+document.addEventListener('DOMContentLoaded', function() {
+    const dropdown = document.getElementById('dropdown-id');
+
+    fetch('/api/get-dropdown-data/')
+        .then(response => response.json())
+        .then(data => {
+            data.forEach(item => {
+                let option = new Option(item.Name, JSON.stringify(item));
+                dropdown.add(option);
+                console.log(option)
+            });
+        })
+        .catch(error => console.error('Error:', error));
+});
+
+
+</script>
+
+</body>
+</html>
